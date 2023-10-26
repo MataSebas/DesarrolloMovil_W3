@@ -21,7 +21,6 @@ class ListAdapter(val context: Activity,
         val inflater = context.layoutInflater
 
         val rowView: View = inflater.inflate(R.layout.multidata, null, true)
-
         val txtId = rowView.findViewById<View>(R.id.txtid) as TextView
         val txtNombre = rowView.findViewById<View>(R.id.txtNombre) as TextView
         val txtAppellidos = rowView.findViewById<View>(R.id.txtApellidos) as TextView

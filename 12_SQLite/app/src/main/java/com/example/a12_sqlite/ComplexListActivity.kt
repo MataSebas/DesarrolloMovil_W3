@@ -8,6 +8,7 @@ import android.widget.Toast
 import android.widget.ListView
 import android.os.Build
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -21,11 +22,15 @@ class ComplexListActivity : AppCompatActivity() {
         lstComp = findViewById(R.id.lstComp)
 
         lstComp.onItemClickListener =
-            OnItemClickListener { parent, view, position, id ->
+            OnItemClickListener {
+                    parent, view, position, id ->
 
                 // Retrieves text from position
                 val itemValue = lstComp.getItemAtPosition(position) as String
                 buscaPersona(itemValue.toInt())
+
+                val intent = Intent(applicationContext, changes::class.java)
+                startActivity(intent)
             }
 
         // Call cargaContactos function
