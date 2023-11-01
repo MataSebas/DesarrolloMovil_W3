@@ -29,7 +29,7 @@ class AboutFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_about, container, false)
 
         var text_about = root.findViewById<TextView>(R.id.text_about)
-        text_about.setText(R.string.message_home)
+        text_about.setText(R.string.message_about)
 
         return root
     }

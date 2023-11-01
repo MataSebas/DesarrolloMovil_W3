@@ -27,10 +27,19 @@ class ComplexListActivity : AppCompatActivity() {
 
                 // Retrieves text from position
                 val itemValue = lstComp.getItemAtPosition(position) as String
-                buscaPersona(itemValue.toInt())
+                //buscaPersona(itemValue.toInt())
 
-                val intent = Intent(applicationContext, changes::class.java)
-                startActivity(intent)
+//                val intent = Intent(applicationContext, changes::class.java)
+//                startActivity(intent)
+                val persona = buscaPersona(itemValue.toInt())
+                persona?.let {
+                    val intent = Intent(this, changes::class.java)
+                    intent.putExtra("nombre", persona.nombre)
+                    intent.putExtra("apellidos", persona.apellidos)
+                    intent.putExtra("correoElectronico", persona.correoElectronico)
+                    intent.putExtra("numeroTelefonico", persona.numeroTelefonico)
+                    startActivity(intent)
+                }
             }
 
         // Call cargaContactos function
@@ -60,25 +69,39 @@ class ComplexListActivity : AppCompatActivity() {
     }else{
         Toast.makeText(this, "Se requieren permisos", Toast.LENGTH_SHORT).show()
     }}
-    fun buscaPersona(id: Int){
+    data class Persona(val id: String, val nombre: String, val apellidos: String, val correoElectronico: String, val numeroTelefonico: String)
+    fun buscaPersona(id: Int) : Persona?{
         // Open database
         db.open()
 
         // Retrieve contact by id
         val c: Cursor? = db.getContact_by_Id(id)
+        var persona: Persona? = null
 
         if(c!!.count > 0){
             c.moveToFirst()
 
+            persona = Persona(
+                id = c.getString(0), // Asumiendo que la columna 0 es ID
+                nombre = c.getString(1),
+                apellidos = c.getString(2),
+                correoElectronico = c.getString(3),
+                numeroTelefonico = c.getString(4)
+            )
             // Use Toast to show contact data
-            Toast.makeText(
-                applicationContext,
-                "Nombre : ${c.getString(1)}\nApellidos : ${c.getString(2)}", Toast.LENGTH_LONG
-            ).show()
+      //      Toast.makeText(
+    //            applicationContext,
+  //              "Nombre : ${c.getString(1)}\nApellidos : ${c.getString(2)}", Toast.LENGTH_LONG
+ //           ).show()
+
         }
+
 
         // Close database
         db.close()
+
+        return persona
+
     }
 
     fun cargaContactos() {
