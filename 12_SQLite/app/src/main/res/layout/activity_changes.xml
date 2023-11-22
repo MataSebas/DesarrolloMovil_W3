@@ -44,12 +44,14 @@
                 android:text="@string/txtNombre"
                 android:textSize="14sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/lblNombre"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:text=""
                 android:textSize="14sp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -67,12 +69,13 @@
                 android:text="@string/txtApellidos"
                 android:textSize="14sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/lblApellidos"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:text=""/>
         </LinearLayout>
 
         <LinearLayout
@@ -90,12 +93,13 @@
                 android:text="@string/txtCorreo"
                 android:textSize="14sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/lblCorreo"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:text=""/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,12 +116,13 @@
                 android:text="@string/txtNumero"
                 android:textSize="14sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/lblNumber"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:text=""/>
         </LinearLayout>
 
         <ImageView

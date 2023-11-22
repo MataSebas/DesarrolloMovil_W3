@@ -32,14 +32,14 @@ class ComplexListActivity : AppCompatActivity() {
 //                val intent = Intent(applicationContext, changes::class.java)
 //                startActivity(intent)
                 val persona = buscaPersona(itemValue.toInt())
-                persona?.let {
+
                     val intent = Intent(this, changes::class.java)
-                    intent.putExtra("nombre", persona.nombre)
-                    intent.putExtra("apellidos", persona.apellidos)
-                    intent.putExtra("correoElectronico", persona.correoElectronico)
-                    intent.putExtra("numeroTelefonico", persona.numeroTelefonico)
+                    intent.putExtra("nombre", persona?.nombre)
+                    intent.putExtra("apellidos", persona?.apellidos)
+                    intent.putExtra("correoElectronico", persona?.correoElectronico)
+                    intent.putExtra("numeroTelefonico", persona?.numeroTelefonico)
                     startActivity(intent)
-                }
+
             }
 
         // Call cargaContactos function
