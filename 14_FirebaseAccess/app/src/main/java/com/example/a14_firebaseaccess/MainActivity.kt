@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        auth.signOut()
         // intenta obtener el token del usuario del local storage, sino llama a la ventana de registro
         val prefe = getSharedPreferences("appData", Context.MODE_PRIVATE)
         email = prefe.getString("email","")

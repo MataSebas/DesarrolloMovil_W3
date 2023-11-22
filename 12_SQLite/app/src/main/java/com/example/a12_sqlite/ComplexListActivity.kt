@@ -27,6 +27,7 @@ class ComplexListActivity : AppCompatActivity() {
 
                 // Retrieves text from position
                 val itemValue = lstComp.getItemAtPosition(position) as String
+
                 //buscaPersona(itemValue.toInt())
 
 //                val intent = Intent(applicationContext, changes::class.java)
