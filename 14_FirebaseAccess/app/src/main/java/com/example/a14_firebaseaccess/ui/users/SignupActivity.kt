@@ -9,21 +9,33 @@ import android.content.Intent
 import android.widget.EditText
 import android.widget.Button
 import android.widget.Toast
+import com.example.a14_firebaseaccess.entities.cls_Customer
+import com.google.firebase.Firebase
 
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 import java.util.Date
 class SignupActivity : AppCompatActivity() {
     var auth = FirebaseAuth.getInstance()
     var db = FirebaseFirestore.getInstance()
+    private val customerCollectionRef = Firebase.firestore.collection("Customers")
+    private val orderCollectionRef = Firebase.firestore.collection("Orders")
 
 
     private lateinit var txtRNombre: EditText
     private lateinit var txtREmail: EditText
     private lateinit var txtRContra: EditText
     private lateinit var txtRreContra: EditText
+    private lateinit var txtCustomerID: EditText
     private lateinit var btnRegistrarU: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +46,7 @@ class SignupActivity : AppCompatActivity() {
         txtRreContra = findViewById(R.id.txtRreContra)
         btnRegistrarU = findViewById(R.id.btnRegistrarU)
 
+        txtCustomerID = findViewById(R.id.txtCustID)
         btnRegistrarU.setOnClickListener {
             registrarUsuario()
         }
@@ -43,6 +56,7 @@ class SignupActivity : AppCompatActivity() {
         val email = txtREmail.text.toString()
         val contra = txtRContra.text.toString()
         val reContra = txtRreContra.text.toString()
+        val cusID = txtCustomerID.text.toString()
 
         if (nombre.isEmpty() || email.isEmpty() || contra.isEmpty() || reContra.isEmpty()) {
             Toast.makeText(this, "Favor de llenar todos los campos", Toast.LENGTH_SHORT).show()
@@ -56,8 +70,10 @@ class SignupActivity : AppCompatActivity() {
                                 "idemp" to task.result?.user?.uid,
                                 "usuario" to nombre,
                                 "email" to email,
+                                "customerID" to cusID,
                                 "ultAcceso" to dt.toString(),
                             )
+                            retrievePersons(cusID)
                             db.collection("datosUsuarios")
                                 .add(user)
                                 .addOnSuccessListener { documentReference ->
@@ -71,6 +87,15 @@ class SignupActivity : AppCompatActivity() {
                                     //Set editor fields with the new values
                                     editor.putString("email", email.toString())
                                     editor.putString("contra", contra.toString())
+                                    editor.putString("customerID", cusID.toString())
+                                    editor.putString("Shipvia", cusID.toString())
+                                    editor.putString("ShipName", cusID.toString())
+                                    editor.putString("ShipAddress", cusID.toString())
+                                    editor.putString("ShipCity", cusID.toString())
+                                    editor.putString("ShipRegion", cusID.toString())
+                                    editor.putString("ShipPostalCode", cusID.toString())
+                                    editor.putString("ShipCountry", cusID.toString())
+
 
                                     //Write app data
                                     editor.commit()
@@ -94,4 +119,45 @@ class SignupActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun retrievePersons(customerID: String) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val custID = customerID.toInt()
+            val querySnapshot = customerCollectionRef
+                //.where( custID.equals("CustomerID") )
+                .get()
+                .await()
+            val sb = StringBuilder()
+            for(document in querySnapshot.documents) {
+                val customer = document.toObject<cls_Customer>()
+            }
+            withContext(Dispatchers.Main) {
+            }
+        } catch(e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@SignupActivity, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    private fun retrieveOrder(customerID: String) = CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val custID = customerID.toInt()
+            val querySnapshot = customerCollectionRef
+                //.where( custID.equals("CustomerID") )
+                .get()
+                .await()
+            val sb = StringBuilder()
+            for(document in querySnapshot.documents) {
+                val customer = document.toObject<cls_Customer>()
+            }
+            withContext(Dispatchers.Main) {
+            }
+        } catch(e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@SignupActivity, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 }
+
+

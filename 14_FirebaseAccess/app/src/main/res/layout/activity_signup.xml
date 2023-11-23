@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_margin="15dp"
     android:orientation="vertical"
-    tools:context=".ui.SignupActivity" >
+    tools:context=".ui.users.SignupActivity" >
 
     <TextView
         android:layout_width="match_parent"
@@ -18,6 +18,19 @@
         android:layout_marginRight="10dp"
         android:textAlignment="center"
         android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/txtCustID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="Código de Cliente"
+        android:inputType="textEmailAddress"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:minHeight="48dp"
+        android:textColorHint="#757575"/>
 
     <EditText
         android:id="@+id/txtRNombre"
