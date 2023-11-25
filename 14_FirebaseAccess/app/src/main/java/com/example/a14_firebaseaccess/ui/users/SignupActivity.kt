@@ -6,9 +6,11 @@ import com.example.a14_firebaseaccess.R
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.widget.EditText
 import android.widget.Button
 import android.widget.Toast
+import com.example.a14_firebaseaccess.entities.Orders
 import com.example.a14_firebaseaccess.entities.cls_Customer
 import com.google.firebase.Firebase
 
@@ -24,6 +26,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 import java.util.Date
+
 class SignupActivity : AppCompatActivity() {
     var auth = FirebaseAuth.getInstance()
     var db = FirebaseFirestore.getInstance()
@@ -50,6 +53,7 @@ class SignupActivity : AppCompatActivity() {
         btnRegistrarU.setOnClickListener {
             registrarUsuario()
         }
+
     }
     private fun registrarUsuario() {
         val nombre = txtRNombre.text.toString()
@@ -58,7 +62,7 @@ class SignupActivity : AppCompatActivity() {
         val reContra = txtRreContra.text.toString()
         val cusID = txtCustomerID.text.toString()
 
-        if (nombre.isEmpty() || email.isEmpty() || contra.isEmpty() || reContra.isEmpty()) {
+        if (nombre.isEmpty() || email.isEmpty() || contra.isEmpty() || reContra.isEmpty() || cusID.isEmpty()) {
             Toast.makeText(this, "Favor de llenar todos los campos", Toast.LENGTH_SHORT).show()
         } else {
             if (contra == reContra) {
@@ -73,21 +77,28 @@ class SignupActivity : AppCompatActivity() {
                                 "customerID" to cusID,
                                 "ultAcceso" to dt.toString(),
                             )
-                            retrievePersons(cusID)
+                           val updating = updatePersonContactDetails(cusID, nombre)
+
                             db.collection("datosUsuarios")
                                 .add(user)
                                 .addOnSuccessListener { documentReference ->
 
                                     //Register the data into the local storage
-                                    val prefe = this.getSharedPreferences("appData", Context.MODE_PRIVATE)
+                                    val prefe = this.getSharedPreferences("appData", MODE_PRIVATE)
 
                                     //Create editor object for write app data
                                     val editor = prefe.edit()
+
+                                    if ( updating.equals(true)){
+
+                                        retrieveOrder(cusID)
+                                    }
 
                                     //Set editor fields with the new values
                                     editor.putString("email", email.toString())
                                     editor.putString("contra", contra.toString())
                                     editor.putString("customerID", cusID.toString())
+
                                     editor.putString("Shipvia", cusID.toString())
                                     editor.putString("ShipName", cusID.toString())
                                     editor.putString("ShipAddress", cusID.toString())
@@ -103,7 +114,7 @@ class SignupActivity : AppCompatActivity() {
                                     Toast.makeText(this,"Usuario registrado correctamente",Toast.LENGTH_SHORT).show()
 
                                     Intent().let {
-                                        setResult(Activity.RESULT_OK)
+                                        setResult(RESULT_OK)
                                         finish()
                                     }
                                 }
@@ -120,44 +131,66 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun retrievePersons(customerID: String) = CoroutineScope(Dispatchers.IO).launch {
+    private  fun updatePersonContactDetails(customerID: String, nombre:String ) = CoroutineScope(Dispatchers.IO).launch {
+        var isUpdateSuccessful = false
         try {
-            val custID = customerID.toInt()
             val querySnapshot = customerCollectionRef
-                //.where( custID.equals("CustomerID") )
+                .whereEqualTo("CustomerID", customerID)  // Asume que "id" es el campo en tus documentos.
                 .get()
                 .await()
-            val sb = StringBuilder()
             for(document in querySnapshot.documents) {
                 val customer = document.toObject<cls_Customer>()
-            }
-            withContext(Dispatchers.Main) {
+                if (customer?.CustomerID == customerID) {  // Asume que cls_Customer tiene una propiedad "id".
+                    val documentReference = document.reference
+                    documentReference.update(
+                        mapOf(
+                            "ContactName" to nombre,
+                            "ContactTitle" to nombre
+                        )
+                    ).await()
+                    isUpdateSuccessful = true
+                    break  // Rompe el ciclo una vez que actualizas los detalles del contacto.
+                }
             }
         } catch(e: Exception) {
             withContext(Dispatchers.Main) {
                 Toast.makeText(this@SignupActivity, e.message, Toast.LENGTH_LONG).show()
             }
+            false
         }
+        isUpdateSuccessful  // Devuelve verdadero si la actualización fue exitosa.
     }
+
     private fun retrieveOrder(customerID: String) = CoroutineScope(Dispatchers.IO).launch {
+        val sb = StringBuilder()
         try {
-            val custID = customerID.toInt()
-            val querySnapshot = customerCollectionRef
-                //.where( custID.equals("CustomerID") )
+            val querySnapshot = orderCollectionRef
+                .whereEqualTo("CustomerID", customerID)
                 .get()
                 .await()
-            val sb = StringBuilder()
             for(document in querySnapshot.documents) {
-                val customer = document.toObject<cls_Customer>()
+                val order = document.toObject<Orders>()
+                sb.apply {
+                    appendln("ShipAddress: ${order?.ShipAddress}")
+                    appendln("ShipCity: ${order?.ShipCity}")
+                    appendln("ShipCountry: ${order?.ShipCountry}")
+                    appendln("ShipName: ${order?.ShipName}")
+                    appendln("ShipPostalCode: ${order?.ShipPostalCode}")
+                    appendln("ShipRegion: ${order?.ShipRegion ?: "NULL"}")
+                    appendln("ShipVia: ${order?.ShipVia}")
+                }
             }
             withContext(Dispatchers.Main) {
+
             }
         } catch(e: Exception) {
             withContext(Dispatchers.Main) {
                 Toast.makeText(this@SignupActivity, e.message, Toast.LENGTH_LONG).show()
             }
         }
+
     }
+
 }
 
 
