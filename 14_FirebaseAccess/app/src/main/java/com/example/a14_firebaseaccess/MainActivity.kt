@@ -7,10 +7,6 @@ import android.content.Intent
 import android.widget.Toast
 import com.example.a14_firebaseaccess.ui.users.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
-import android.widget.ListView
-import android.util.Log
-import com.example.a14_firebaseaccess.entities.cls_Category
-import com.example.a14_firebaseaccess.ui.categories.CategoryAdapter
 import com.google.firebase.firestore.FirebaseFirestore
 
 const val valorIntentLogin = 1
@@ -41,30 +37,11 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            obtenerDatos()
+//            obtenerDatos()
+            val intent = Intent(applicationContext, MainMenu::class.java)
+            startActivity(intent)
+
         }
     }
-    private fun obtenerDatos() {
-        //Toast.makeText(this,"Esperando hacer algo importante", Toast.LENGTH_LONG).show()
-        var coleccion: ArrayList<cls_Category?> = ArrayList()
-        var listaView: ListView = findViewById(R.id.lstCategories)
-        db.collection("Categories").orderBy("CategoryID")
-            .get()
-            .addOnCompleteListener { docc ->
-                if (docc.isSuccessful) {
-                    for (document in docc.result!!) {
-                        Log.d(TAG, document.id + " => " + document.data)
-                        var datos: cls_Category = cls_Category(document.data["CategoryID"].toString().toInt(),
-                            document.data["CategoryName"].toString(),
-                            document.data["Description"].toString(),
-                            document.data["urlImage"].toString())
-                        coleccion.add(datos)
-                    }
-                    var adapter: CategoryAdapter = CategoryAdapter(this, coleccion)
-                    listaView.adapter =adapter
-                } else {
-                    Log.w(TAG, "Error getting documents.", docc.exception)
-                }
-            }
-    }
+
 }
